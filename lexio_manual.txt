@@ -1,0 +1,90 @@
+HOW TO PLAY LEXIO
+
+
+[NUMBER OF PLAYERS]
+                |  Three  |  Four  |  Five  |
+================|=========|========|========|
+ Tile Range     |  1 ~ 9  | 1 ~ 13 | 1 ~ 15 |
+----------------|---------|--------|--------|
+ Num. of Tiles  |    12   |   13   |   12   |
+
+
+[TILES]
+\033[31mSUN\033[0m > \033[32mMOON\033[0m > \033[33mSTAR\033[0m > \033[36mCLOUD\033[0m
+\033[31mSUN\033[0m     2 > 1 > 15 > 14 > 13 > 12 > ... > 3
+\033[32mMOON\033[0m    2 > 1 > 15 > 14 > 13 > 12 > ... > 3
+\033[33mSTAR\033[0m    2 > 1 > 15 > 14 > 13 > 12 > ... > 3
+\033[36mCLOUD\033[0m   2 > 1 > 15 > 14 > 13 > 12 > ... > 3
+
+[COMBINATIONS]
+                     ____     ____     ____
+                    |    |   |    |   |    |
+1. Single           | 10 | < | 13 | < | 13 |
+                    |____|   |____|   |____|
+                     ____ ____     ____ ____
+                    |    |    |   |    |    |
+2. One Pair         | 04 | 04 | < | 11 | 11 |
+                    |____|____|   |____|____|
+                     ____ ____ ____     ____ ____ ____
+                    |    |    |    |   |    |    |    |
+3. Triple           | 05 | 05 | 05 | < | 07 | 07 | 07 |
+                    |____|____|____|   |____|____|____|
+                     ____ ____ ____ ____ ____
+                    |    |    |    |    |    |
+4. Straight         | 01 | 02 | 03 | 04 | 05 |
+                    |____|____|____|____|____|
+                     ____ ____ ____ ____ ____
+                    |    |    |    |    |    |
+5. Flush            | 01 | 15 | 13 | 06 | 03 |
+                    |____|____|____|____|____|
+                     ____ ____ ____ ____ ____
+                    |    |    |    |    |    |
+6. Full House       | 08 | 08 | 08 | 03 | 03 |
+                    |____|____|____|____|____|
+                     ____ ____ ____ ____ ____
+                    |    |    |    |    |    |
+7. Four Card        | 15 | 15 | 15 | 15 | 10 |
+                    |____|____|____|____|____|
+                     ____ ____ ____ ____ ____
+                    |    |    |    |    |    |
+8. Straight Flush   | 05 | 06 | 07 | 08 | 09 |
+                    |____|____|____|____|____|
+
+
+[GAME RULES]
+1. Shuffle every tile randomly.
+2. Distribute tiles and chips and do not show them to the other players.
+3. The player who has Cloud-3 begins first.
+    - Cloud-3 card is not required to be hand-in for the first turn.
+    - First player can choose any combination/number of tiles.
+4. Next player should hand-in the same number of tiles with stronger combination.
+5. If player has no tiles or is not willing to hand-in, player can 'PASS'.
+    - Even if you 'PASS' previously, you are allowed to play when the turn makes it back around to you.
+    - 'PASS' is not permanent.
+6. If all other players announce 'PASS', the last player will become the first player.
+7. The round ends immediately when at least one of the player has no more tile left.
+8. Calculate the score.
+
+
+[CALCULATING SCORE]
+1st place: Recieves chips from every player for each remaining tile count.
+2nd place: Recieves chips from 3rd, 4th, 5th players for each tile difference.
+3rd place: Recieves chips from 4th, 5th players for each tile difference.
+4th place: Recieves chips from 5th player for tile difference.
+5th place: Next Chance.
+However, if you have the tile with number 2 at the end, you lose chips TWICE of your tiles.
+
+
+[HOW TO DO]
+HAND-IN: input the indices of the wanted tiles.
+    e.g. if \033[36mCloud-5,6,8\033[0m wanted:
+     ____ ____ ____ ____ ____
+    |    |    |    |    |    |
+    | 05 | 06 | 07 | 08 | 09 |
+    |____|____|____|____|____|
+        1    2    3    4    5
+    >>> 1 2 4                       <--- input
+
+PASS: input one of these words - PASS, Pass, pass, P, p
+    e.g.
+    >>> PASS
