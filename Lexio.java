@@ -25,7 +25,7 @@ public class Lexio extends Game {
 
     void createComputers() {
         int size = players.size();
-        for(int i=0; i<=playerNum - size; i++) {
+        for(int i=0; i<=playerNum - size - 1; i++) {
             User comp = new User();
             comp.setId("Computer-" + i);
             LexioPlayer c = new LexioPlayer(comp, true);
@@ -156,7 +156,7 @@ public class Lexio extends Game {
     }
 
     void showUserScreen(LexioPlayer currentPlayer, LexioTileCombination lastCombi) {
-        System.out.println("                         ///\n"
+        System.out.println("\n                         ///\n"
                         + "                        ///      /////// \\\\\\  ///     /////   ///////\n"
                         + "                       ///      ///       \\\\\\///      ///    //   //\n"
                         + "                      ///      ///////     \\|//      ///    //   //\n"
@@ -193,7 +193,7 @@ public class Lexio extends Game {
     }
 
 
-    /* UTILS */
+    /* HUMAN */
 
     int defineCombinationRank(ArrayList<LexioTile> c) {
         int rank = -1;
@@ -236,6 +236,12 @@ public class Lexio extends Game {
         else    rank = -1;
 
         return rank;
+    }
+
+    boolean isCombinationHigh(ArrayList<LexioTile> c, LexioTileCombination lastCombi) {
+        int size = c.size();
+        if(c.get(size - 1).compareTo(lastCombi.getCombination().get(size - 1)) == 1)    return true;
+        else    return false;
     }
 
     void calculateScore() {
@@ -340,7 +346,7 @@ public class Lexio extends Game {
     void generateCombination(ArrayList<ArrayList<LexioTile>> tmpCombi, ArrayList<LexioTile> hands, boolean[] visited, int start, int n, int r) {      // nCr
         if(r == 0) {
             ArrayList<LexioTile> c = new ArrayList<LexioTile>();
-            for(int i=0; i<hands.size(); i++) {
+            for(int i=0; i<visited.length; i++) {
                 if(visited[i] == true)
                     c.add(hands.get(i));
             }
@@ -361,8 +367,8 @@ public class Lexio extends Game {
         ArrayList<ArrayList<LexioTile>> tmpCombi = new ArrayList<ArrayList<LexioTile>>();
 
         for(int i=0; i<4; i++) {
-            if(lastCombi.getCombination().size() > combiNum[i])  continue;
-            boolean[] visited = new boolean[i];
+            if(lastCombi != null && lastCombi.getCombination().size() != combiNum[i])  continue;
+            boolean[] visited = new boolean[hands.size()];
             generateCombination(tmpCombi, hands, visited, 0, hands.size(), combiNum[i]);
         }
         checkCombination(possibleCombi, tmpCombi, lastCombi);
@@ -374,8 +380,8 @@ public class Lexio extends Game {
         ArrayList<LexioTileCombination> possibleCombi = getPossibleCombination(computer.getHands(), lastCombi);
         if(possibleCombi.size() == 0)   return null;
         
-        Random rand = new Random(possibleCombi.size() + 1);
-        int idx = rand.nextInt();
+        Random rand = new Random();
+        int idx = rand.nextInt(possibleCombi.size() + 1);
         if(idx == possibleCombi.size())     return null;
         else    return possibleCombi.get(idx);
     }
@@ -386,7 +392,7 @@ public class Lexio extends Game {
     public void run(User... user) {
         LexioPlayer currentPlayer;
         LexioPlayer lastPlayer;
-        LexioPlayer nextPlayer;
+        int nextPlayer = -1;
         LexioTileCombination lastCombi = null;
         int passCount = 0;
         Scanner scan = new Scanner(System.in);
@@ -395,7 +401,7 @@ public class Lexio extends Game {
         
         while(true) {
             System.out.print("How Many players do you want? Choose between 3 and 5.\n>>> ");
-            playerNum = scan.nextInt();
+            playerNum = Integer.parseInt(scan.nextLine());
             if(playerNum < 3 || playerNum > 5)      System.out.print("Invalid value! Try again.\n>>> ");
             else    break;
         }
@@ -409,11 +415,12 @@ public class Lexio extends Game {
         currentPlayer = players.get(0);
         lastPlayer = currentPlayer;
         while(true) {
+            if(nextPlayer != -1)  currentPlayer = players.get(nextPlayer);
             // computer
             if(currentPlayer.isComputer) {
                 LexioTileCombination combi = computerDecision(currentPlayer, lastCombi);
                 if(combi != null) {
-                    System.out.println(currentPlayer.getUser().getId() + " card's combination is: " + combi.getRank().name());
+                    System.out.println("\n" + currentPlayer.getUser().getId() + " card's combination is: " + combi.getRank().name());
                     System.out.println(showTiles(combi.getCombination()));
                     for(int i=0; i<combi.getCombination().size(); i++)   currentPlayer.removeHands(combi.getCombination().get(i));
                     lastCombi = combi;
@@ -421,7 +428,7 @@ public class Lexio extends Game {
                     passCount = 0;
                 }
                 else {
-                    System.out.println(currentPlayer.getUser().getId() + " PASS");
+                    System.out.println("\n" + currentPlayer.getUser().getId() + " PASS");
                     passCount += 1;
                 }
             }
@@ -431,56 +438,58 @@ public class Lexio extends Game {
                 showUserScreen(currentPlayer, lastCombi);
 
                 // get combination
+                if(passCount == playerNum - 1)  System.out.println("Now, you are the first player. Choose any combination you like.");
                 System.out.print("Choose indices for your combination.\n>>> ");
-                LexioTileCombination combi = null;
+
+                LexioTileCombination combi = new LexioTileCombination();
                 while(true) {
                     String input = scan.nextLine();
-                    if(input == "PASS" || input == "Pass" || input == "pass" || input == "P" || input == "p") {
+                    if(input.equals("PASS") == true || input.equals("Pass") == true || input.equals("pass") == true || input.equals("P") == true || input.equals("p") == true) {
                         if(lastPlayer == currentPlayer)     System.out.print("[ERROR] You are the first player!\n>>> ");
                         else {
                             passCount += 1;
                             break;
                         }
                     }
-                    else if(input == null)  System.out.print("[ERROR] Invalid Combination! Try again.\n>>> ");
                     else {
                         String[] idxString = input.split(" ");
                         if(idxString.length == 0 || idxString.length == 4 || idxString.length > 5)    System.out.print("[ERROR] Invalid input! Try again.\n>>> ");
                         else {
                             int[] idx = new int[idxString.length];
-                            ArrayList<LexioTile> c = null;
+                            ArrayList<LexioTile> c = new ArrayList<LexioTile>();
                             
                             for(int i=0; i<idxString.length; i++)   idx[i] = Integer.parseInt(idxString[i]);
-                            for(int i=0; i<idx.length; i++)         c.add(currentPlayer.getHands().get(i));
+                            for(int i=0; i<idx.length; i++)         c.add(currentPlayer.getHands().get(idx[i]));
                             
                             int rank = defineCombinationRank(c);
-                            if(rank < -1)   System.out.print("[ERROR] Invalid Combination! Try again.\n>>> ");
-                            else if(lastCombi.getRank().ordinal() != rank)  System.out.print("[ERROR] Your combination does not match with the last combination! Try again\n>>> ");
+                            if(rank <= -1)   System.out.print("[ERROR] Invalid Combination! Try again.\n>>> ");
+                            else if(lastCombi != null && lastCombi.getRank().ordinal() != rank)  System.out.print("[ERROR] Your combination does not match with the last combination! Try again\n>>> ");
+                            else if(lastCombi != null && isCombinationHigh(c, lastCombi) == false)   System.out.print("[ERROR] Your combination is lower than the last combination! Try again\n>>> ");
                             else {
                                 passCount = 0;
                                 combi.setCombination(c);
                                 combi.setRank(LexioRank.values()[rank]);
                                 for(int i=0; i<c.size(); i++)   currentPlayer.removeHands(c.get(i));
+                                lastCombi = combi;
+                                break;
                             }
                         }
                     }
                 }
 
-                lastCombi = combi;
                 lastPlayer = currentPlayer;
 
-                if(passCount == playerNum - 1)  System.out.println("Now, you are the first player. Choose any combination you like.\n>>> ");
                 
                 Screen.clear();
             }
 
             // next player
-            if(passCount == playerNum - 1) {
+            if(passCount == playerNum) {
                 lastCombi = null;
                 lastPlayer = currentPlayer;
-                nextPlayer = currentPlayer;
+                nextPlayer = players.indexOf(currentPlayer);
             }
-            else    nextPlayer = players.get(players.indexOf(currentPlayer) + 1);
+            else    nextPlayer = (players.indexOf(currentPlayer) + 1) % playerNum;
 
             // game end
             if(currentPlayer.getHands().size() == 0) {
