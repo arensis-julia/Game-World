@@ -249,35 +249,46 @@ public class Lexio extends Game {
 
         // 1st place
         for(int i=1; i<playerNum; i++) {
+            int size = players.get(i).getHands().size();
+            if(players.get(i).getHands().get(size - 1).getNum() == 2)      size *= 2;
             int chip = players.get(i).getChips();
-            if(players.get(i).getHands().get(0).getNum() == 2)      chip *= 2;
-            players.get(0).addChips(chip);
-            players.get(i).removeChips(chip);
+            if(chip < size)     size = chip;
+            players.get(0).addChips(size);
+            players.get(i).removeChips(size);
         }
 
         // 2nd place
         for(int i=2; i<playerNum; i++) {
-            int chip = players.get(i).getChips() - players.get(1).getChips();
-            if(players.get(i).getHands().get(0).getNum() == 2)      chip *= 2;
-            players.get(1).addChips(chip);
-            players.get(i).removeChips(chip);
+            int size = players.get(i).getHands().size();
+            if(players.get(i).getHands().get(size - 1).getNum() == 2)      size *= 2;
+            int sizeDiff = size - players.get(1).getHands().size();
+            int chip = players.get(i).getChips();
+            if(chip < sizeDiff)     sizeDiff = chip;
+            players.get(1).addChips(sizeDiff);
+            players.get(i).removeChips(sizeDiff);
         }
 
         // 3rd place
         for(int i=3; i<playerNum; i++) {
-            int chip = players.get(i).getChips() - players.get(2).getChips();
-            if(players.get(i).getHands().get(0).getNum() == 2)      chip *= 2;
-            players.get(2).addChips(chip);
-            players.get(i).removeChips(chip);
+            int size = players.get(i).getHands().size();
+            if(players.get(i).getHands().get(size - 1).getNum() == 2)      size *= 2;
+            int sizeDiff = size - players.get(2).getHands().size();
+            int chip = players.get(i).getChips();
+            if(chip < sizeDiff)     sizeDiff = chip;
+            players.get(2).addChips(sizeDiff);
+            players.get(i).removeChips(sizeDiff);
         }
 
         // 4th place
         if(playerNum > 3) {
             for(int i=4; i<playerNum; i++) {
-                int chip = players.get(i).getChips() - players.get(3).getChips();
-                if(players.get(i).getHands().get(0).getNum() == 2)      chip *= 2;
-                players.get(3).addChips(chip);
-                players.get(i).removeChips(chip);
+                int size = players.get(i).getHands().size();
+                if(players.get(i).getHands().get(size - 1).getNum() == 2)   size *= 2;
+                int sizeDiff = size - players.get(3).getHands().size();
+                int chip = players.get(i).getChips();
+                if(chip < sizeDiff)     sizeDiff = chip;
+                players.get(3).addChips(sizeDiff);
+                players.get(i).removeChips(sizeDiff);
             }
         }
     }
@@ -308,37 +319,37 @@ public class Lexio extends Game {
             
             // pair
             else if(cRank == 1) {
-                if((lcRank < 1) || (c.get(1).compareTo(lc.get(1)) == 1))    possibleCombi.add(new LexioTileCombination(c, LexioRank.PAIR));
+                if((lcRank < 0) || ((lcRank == 1) && (c.get(1).compareTo(lc.get(1)) == 1)))    possibleCombi.add(new LexioTileCombination(c, LexioRank.PAIR));
             }
             
             // triple
             else if(cRank == 2) {
-                if((lcRank < 2) || (c.get(2).compareTo(lc.get(2)) == 1))    possibleCombi.add(new LexioTileCombination(c, LexioRank.TRIPLE));
+                if((lcRank < 0) || ((lcRank == 2) && (c.get(2).compareTo(lc.get(2)) == 1)))    possibleCombi.add(new LexioTileCombination(c, LexioRank.TRIPLE));
             }
             
             // four card
             else if(cRank == 6) {
-                if((lcRank < 6) || (c.get(2).compareTo(lc.get(2)) == 1))    possibleCombi.add(new LexioTileCombination(c, LexioRank.FOURCARD));
+                if((lcRank < 0) || ((lcRank == 6) && (c.get(2).compareTo(lc.get(2)) == 1)))    possibleCombi.add(new LexioTileCombination(c, LexioRank.FOURCARD));
             }
 
             // full house
             else if(cRank == 5) {
-                if((lcRank < 5) || (c.get(2).compareTo(lc.get(2)) == 1))    possibleCombi.add(new LexioTileCombination(c, LexioRank.FULLHOUSE));
+                if((lcRank < 0) || ((lcRank == 5) && (c.get(2).compareTo(lc.get(2)) == 1)))    possibleCombi.add(new LexioTileCombination(c, LexioRank.FULLHOUSE));
             }
 
             // flush
             else if(cRank == 4) {
-                if((lcRank < 4) || (c.get(4).compareTo(lc.get(4)) == 1))    possibleCombi.add(new LexioTileCombination(c, LexioRank.FLUSH));
+                if((lcRank < 0) || ((lcRank == 4) && (c.get(4).compareTo(lc.get(4)) == 1)))    possibleCombi.add(new LexioTileCombination(c, LexioRank.FLUSH));
             }
             
             // straight
             else if(cRank == 3) {
-                if((lcRank < 3) || (c.get(4).compareTo(lc.get(4)) == 1))    possibleCombi.add(new LexioTileCombination(c, LexioRank.STRAIGHT));
+                if((lcRank < 0) || ((lcRank == 3) && (c.get(4).compareTo(lc.get(4)) == 1)))    possibleCombi.add(new LexioTileCombination(c, LexioRank.STRAIGHT));
             }
 
             // straight flush
             else if(cRank == 7) {
-                if((lcRank < 7) || (c.get(4).compareTo(lc.get(4)) == 1))    possibleCombi.add(new LexioTileCombination(c, LexioRank.STRAIGHTFLUSH));
+                if((lcRank < 0) || ((lcRank == 7) && (c.get(4).compareTo(lc.get(4)) == 1)))    possibleCombi.add(new LexioTileCombination(c, LexioRank.STRAIGHTFLUSH));
             }
         }
     }
@@ -376,13 +387,18 @@ public class Lexio extends Game {
         return possibleCombi;
     }
 
-    LexioTileCombination computerDecision(LexioPlayer computer, LexioTileCombination lastCombi) {
+    LexioTileCombination computerDecision(LexioPlayer computer, LexioTileCombination lastCombi, boolean isFirst) {
         ArrayList<LexioTileCombination> possibleCombi = getPossibleCombination(computer.getHands(), lastCombi);
         if(possibleCombi.size() == 0)   return null;
         
         Random rand = new Random();
-        int idx = rand.nextInt(possibleCombi.size() + 1);
-        if(idx == possibleCombi.size())     return null;
+        int s = possibleCombi.size() - 1;
+        int idx;
+        if(isFirst)     idx = rand.nextInt(s);
+        else    idx = rand.nextInt(s + 1);
+        if(computer.getHands().size() < 3)  idx = possibleCombi.size() - 1;
+        
+        if(idx == 0)     return null;
         else    return possibleCombi.get(idx);
     }
 
@@ -395,6 +411,7 @@ public class Lexio extends Game {
         int nextPlayer = -1;
         LexioTileCombination lastCombi = null;
         int passCount = 0;
+        boolean isFirst = false;
         Scanner scan = new Scanner(System.in);
 
         initialize(user);
@@ -416,9 +433,15 @@ public class Lexio extends Game {
         lastPlayer = currentPlayer;
         while(true) {
             if(nextPlayer != -1)  currentPlayer = players.get(nextPlayer);
+            if(passCount == playerNum - 1) {
+                lastCombi = null;
+                isFirst = true;
+            }
+
             // computer
             if(currentPlayer.isComputer) {
-                LexioTileCombination combi = computerDecision(currentPlayer, lastCombi);
+                LexioTileCombination combi = computerDecision(currentPlayer, lastCombi, isFirst);
+                isFirst = false;
                 if(combi != null) {
                     System.out.println("\n" + currentPlayer.getUser().getId() + " card's combination is: " + combi.getRank().name());
                     System.out.println(showTiles(combi.getCombination()));
@@ -436,12 +459,12 @@ public class Lexio extends Game {
             // human
             else {
                 showUserScreen(currentPlayer, lastCombi);
-
                 // get combination
-                if(passCount == playerNum - 1)  System.out.println("Now, you are the first player. Choose any combination you like.");
+                if(isFirst)  System.out.println("Now, you are the first player. Choose any combination you like.");
                 System.out.print("Choose indices for your combination.\n>>> ");
 
                 LexioTileCombination combi = new LexioTileCombination();
+                isFirst = false;
                 while(true) {
                     String input = scan.nextLine();
                     if(input.equals("PASS") == true || input.equals("Pass") == true || input.equals("pass") == true || input.equals("P") == true || input.equals("p") == true) {

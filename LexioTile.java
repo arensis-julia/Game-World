@@ -24,7 +24,14 @@ public class LexioTile implements Comparable <LexioTile> {
     }
 
     public int compareTo(LexioTile tile) {
-        if(this.num > tile.getNum())    return 1;
+        // 1
+        if(this.num == 1 && (tile.getNum() > 2 || (tile.getNum() == 1 && this.symbol.ordinal() > tile.getSymbol().ordinal())))  return 1;
+        else if(tile.getNum() == 1 && (this.num > 2 || (this.num == 1 && tile.getSymbol().ordinal() > this.symbol.ordinal())))  return -1;
+        // 2
+        else if(this.num == 2 && (tile.getNum() > 2 || tile.getNum() == 1 || (tile.getNum() == 2 && this.symbol.ordinal() > tile.getSymbol().ordinal())))    return 1;
+        else if(tile.getNum() == 2 && (this.num> 2 || this.num == 1 || (this.num== 2 && tile.getSymbol().ordinal() > this.symbol.ordinal())))    return -1;
+        // else
+        else if(this.num > tile.getNum())    return 1;
         else if((this.num == tile.getNum()) && (this.symbol.ordinal() > tile.getSymbol().ordinal()))    return 1;
         else    return -1;
     }

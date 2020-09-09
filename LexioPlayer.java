@@ -52,8 +52,8 @@ public class LexioPlayer implements Comparable <LexioPlayer> {
     }
 
     public int compareTo(LexioPlayer user) {
-        if(this.chips > user.getChips())    return 1;
-        else if(this.chips == user.getChips())  return 0;
+        if(this.hands.size() > user.getHands().size())    return 1;
+        else if(this.hands.size() == user.getHands().size())  return 0;
         else    return -1;
     }
 }
