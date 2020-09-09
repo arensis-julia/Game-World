@@ -247,47 +247,14 @@ public class Lexio extends Game {
     void calculateScore() {
         Collections.sort(players);
 
-        // 1st place
-        for(int i=1; i<playerNum; i++) {
-            int size = players.get(i).getHands().size();
-            if(players.get(i).getHands().get(size - 1).getNum() == 2)      size *= 2;
-            int chip = players.get(i).getChips();
-            if(chip < size)     size = chip;
-            players.get(0).addChips(size);
-            players.get(i).removeChips(size);
-        }
-
-        // 2nd place
-        for(int i=2; i<playerNum; i++) {
-            int size = players.get(i).getHands().size();
-            if(players.get(i).getHands().get(size - 1).getNum() == 2)      size *= 2;
-            int sizeDiff = size - players.get(1).getHands().size();
-            int chip = players.get(i).getChips();
-            if(chip < sizeDiff)     sizeDiff = chip;
-            players.get(1).addChips(sizeDiff);
-            players.get(i).removeChips(sizeDiff);
-        }
-
-        // 3rd place
-        for(int i=3; i<playerNum; i++) {
-            int size = players.get(i).getHands().size();
-            if(players.get(i).getHands().get(size - 1).getNum() == 2)      size *= 2;
-            int sizeDiff = size - players.get(2).getHands().size();
-            int chip = players.get(i).getChips();
-            if(chip < sizeDiff)     sizeDiff = chip;
-            players.get(2).addChips(sizeDiff);
-            players.get(i).removeChips(sizeDiff);
-        }
-
-        // 4th place
-        if(playerNum > 3) {
-            for(int i=4; i<playerNum; i++) {
+        for(int j=0; j<playerNum-1; j++) {
+            for(int i=j+1; i<playerNum; i++) {
                 int size = players.get(i).getHands().size();
-                if(players.get(i).getHands().get(size - 1).getNum() == 2)   size *= 2;
-                int sizeDiff = size - players.get(3).getHands().size();
+                if(players.get(i).getHands().get(size - 1).getNum() == 2)      size *= 2;
+                int sizeDiff = size - players.get(j).getHands().size();
                 int chip = players.get(i).getChips();
                 if(chip < sizeDiff)     sizeDiff = chip;
-                players.get(3).addChips(sizeDiff);
+                players.get(j).addChips(sizeDiff);
                 players.get(i).removeChips(sizeDiff);
             }
         }
@@ -405,7 +372,7 @@ public class Lexio extends Game {
 
     /* GAME PLAY */
 
-    public void run(User... user) {
+    public void gamePlay() {
         LexioPlayer currentPlayer;
         LexioPlayer lastPlayer;
         int nextPlayer = -1;
@@ -414,16 +381,6 @@ public class Lexio extends Game {
         boolean isFirst = false;
         Scanner scan = new Scanner(System.in);
 
-        initialize(user);
-        
-        while(true) {
-            System.out.print("How Many players do you want? Choose between 3 and 5.\n>>> ");
-            playerNum = Integer.parseInt(scan.nextLine());
-            if(playerNum < 3 || playerNum > 5)      System.out.print("Invalid value! Try again.\n>>> ");
-            else    break;
-        }
-
-        createComputers();
         createDeck();
         distributeDeck();
 
@@ -474,34 +431,38 @@ public class Lexio extends Game {
                             break;
                         }
                     }
+                    else if(input.equals(""))   System.out.print("[ERROR] You need to enter your indices!\n>>> ");
                     else {
                         String[] idxString = input.split(" ");
-                        if(idxString.length == 0 || idxString.length == 4 || idxString.length > 5)    System.out.print("[ERROR] Invalid input! Try again.\n>>> ");
+                        if(idxString.length == 4 || idxString.length > 5)    System.out.print("[ERROR] Invalid input! Try again.\n>>> ");
                         else {
                             int[] idx = new int[idxString.length];
                             ArrayList<LexioTile> c = new ArrayList<LexioTile>();
                             
                             for(int i=0; i<idxString.length; i++)   idx[i] = Integer.parseInt(idxString[i]);
-                            for(int i=0; i<idx.length; i++)         c.add(currentPlayer.getHands().get(idx[i]));
-                            
-                            int rank = defineCombinationRank(c);
-                            if(rank <= -1)   System.out.print("[ERROR] Invalid Combination! Try again.\n>>> ");
-                            else if(lastCombi != null && lastCombi.getRank().ordinal() != rank)  System.out.print("[ERROR] Your combination does not match with the last combination! Try again\n>>> ");
-                            else if(lastCombi != null && isCombinationHigh(c, lastCombi) == false)   System.out.print("[ERROR] Your combination is lower than the last combination! Try again\n>>> ");
+                            Arrays.sort(idx);
+                            if(idx[idx.length-1] >= currentPlayer.getHands().size()) System.out.print("[ERROR] Invalid index! Try again.\n>>> ");
                             else {
-                                passCount = 0;
-                                combi.setCombination(c);
-                                combi.setRank(LexioRank.values()[rank]);
-                                for(int i=0; i<c.size(); i++)   currentPlayer.removeHands(c.get(i));
-                                lastCombi = combi;
-                                break;
+                                for(int i=0; i<idx.length; i++)         c.add(currentPlayer.getHands().get(idx[i]));
+                            
+                                int rank = defineCombinationRank(c);
+                                if(rank <= -1)   System.out.print("[ERROR] Invalid Combination! Try again.\n>>> ");
+                                else if(lastCombi != null && lastCombi.getRank().ordinal() != rank)  System.out.print("[ERROR] Your combination does not match with the last combination! Try again\n>>> ");
+                                else if(lastCombi != null && isCombinationHigh(c, lastCombi) == false)   System.out.print("[ERROR] Your combination is lower than the last combination! Try again\n>>> ");
+                                else {
+                                    passCount = 0;
+                                    combi.setCombination(c);
+                                    combi.setRank(LexioRank.values()[rank]);
+                                    for(int i=0; i<c.size(); i++)   currentPlayer.removeHands(c.get(i));
+                                    lastCombi = combi;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
 
                 lastPlayer = currentPlayer;
-
                 
                 Screen.clear();
             }
@@ -529,5 +490,21 @@ public class Lexio extends Game {
                 break;
             }
         }
+    }
+
+    public void run(User... user) {
+        Scanner scan = new Scanner(System.in);
+
+        initialize(user);
+
+        while(true) {
+            System.out.print("How Many players do you want? Choose between 3 and 5.\n>>> ");
+            playerNum = Integer.parseInt(scan.nextLine());
+            if(playerNum < 3 || playerNum > 5)      System.out.print("Invalid value! Try again.\n>>> ");
+            else    break;
+        }
+
+        createComputers();
+        gamePlay();
     }
 }
