@@ -361,9 +361,9 @@ public class Lexio extends Game {
         Random rand = new Random();
         int s = possibleCombi.size() - 1;
         int idx;
-        if(isFirst)     idx = rand.nextInt(s);
-        else    idx = rand.nextInt(s + 1);
-        if(computer.getHands().size() < 3)  idx = possibleCombi.size() - 1;
+        if(computer.getHands().size() < 3)  idx = s;
+        else if(isFirst)     idx = rand.nextInt(s) + 1;
+        else    idx = rand.nextInt(s+1);
         
         if(idx == 0)     return null;
         else    return possibleCombi.get(idx);
@@ -480,14 +480,25 @@ public class Lexio extends Game {
                 calculateScore();
                 Screen.clear();
                 System.out.println("=============================== SCORE ===============================");
-                for(int i=0; i<playerNum; i++) {
-                    System.out.println(" " + players.get(i).getUser().getId() + " : " + players.get(i).getChips());
-                    if(!players.get(i).isComputer) {
-                        players.get(i).getUser().setScore(players.get(i).getChips());
-                    }
-                }
+                for(int i=0; i<playerNum; i++)  System.out.println(" " + players.get(i).getUser().getId() + " : " + players.get(i).getChips());
                 System.out.println("=====================================================================");
-                break;
+
+                System.out.print("Do you want to play another game with the same players? (Y/N)\n>>> ");
+                Boolean isEnd = false;
+                while(true) {
+                    String ans = scan.nextLine();
+                    if(ans.equals("Y") || ans.equals("y")) {
+                        for(int i=0; i<playerNum; i++)  players.get(i).setHands(new ArrayList<LexioTile>());
+                        gamePlay();
+                    }
+                    else if(ans.equals("N") || ans.equals("n"))    isEnd = true;
+                    else {
+                        System.out.print("Invalid answer! Please try again.\n>>> ");
+                        continue;
+                    }
+                    break;
+                }
+                if(isEnd == true)   return;
             }
         }
     }
