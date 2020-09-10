@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.util.*;
 
 enum GameState {
-    GAMESTART, LOGINPAGE, MAINMENU, _1PGAMES, _2PGAMES, VIEWMANUAL, VIEWSCORE, GAMEEND, _2PLOGIN
+    GAMESTART, LOGINPAGE, MAINMENU, _1PGAMES, _2PGAMES, VIEWMANUAL, GAMEEND, _2PLOGIN   // , VIEWSCORE
 }
 
 public class GameWordMain {
@@ -12,6 +12,7 @@ public class GameWordMain {
 
     public static void main(String[] args) {
         User player1 = new User();
+        User player2 = new User();
 
         while(true) {
             /* GAME START */
@@ -23,6 +24,9 @@ public class GameWordMain {
 
             /* LOGIN PAGE */
             else if(gameState == GameState.LOGINPAGE) {
+                player1 = new User();
+                player2 = new User();
+
                 while(true) {
                     Screen.clear();
                     Screen.printLogo();
@@ -72,9 +76,8 @@ public class GameWordMain {
                 System.out.println("1. One Player");
                 System.out.println("2. Two Players");
                 System.out.println("3. Game Manual");
-                System.out.println("4. Score Board");
-                System.out.println("5. Logout");
-                System.out.println("6. Exit");
+                System.out.println("4. Logout");
+                System.out.println("5. Exit");
                 System.out.print(">>> ");
 
                 while(true) {
@@ -94,18 +97,18 @@ public class GameWordMain {
                         gameState = GameState.VIEWMANUAL;
                         break;
                     }
-                    // 4. Score Board
+                    // // Score Board
+                    // else if(opt == 4) {
+                    //     gameState = GameState.VIEWSCORE;
+                    //     break;
+                    // }
+                    // 4. Logout
                     else if(opt == 4) {
-                        gameState = GameState.VIEWSCORE;
+                        gameState = GameState.GAMESTART;
                         break;
                     }
-                    // 5. Logout
+                    // 5. Exit
                     else if(opt == 5) {
-                        gameState = GameState.LOGINPAGE;
-                        break;
-                    }
-                    // 6. Exit
-                    else if(opt == 6) {
                         gameState = GameState.GAMEEND;
                         break;
                     }
@@ -142,34 +145,34 @@ public class GameWordMain {
                 }
             }
 
-            /* VIEW SCORE */
-            else if(gameState == GameState.VIEWSCORE) {
-                Screen.clear();
-                Screen.printLogo();
-                System.out.println("Choose one of the game scores.");
-                System.out.println("0. Back");
-                System.out.println("1. Lexio");
-                System.out.print(">>> ");
+            // /* VIEW SCORE */
+            // else if(gameState == GameState.VIEWSCORE) {
+            //     Screen.clear();
+            //     Screen.printLogo();
+            //     System.out.println("Choose one of the game scores.");
+            //     System.out.println("0. Back");
+            //     System.out.println("1. Lexio");
+            //     System.out.print(">>> ");
 
-                while(true) {
-                    int opt = scan.nextInt();
-                    // 0. Back
-                    if(opt == 0) {
-                        gameState = GameState.MAINMENU;
-                        break;
-                    }
-                    // 1. Lexio
-                    else if(opt == 1) {
-                        Screen.clear();
-                        Screen.printLexioScoreTitle();
-                        ScoreBoard.printScoreBoard(GameType.LEXIO);
-                        Screen.pause();
-                        break;
-                    }
-                    // error
-                    else    System.out.print("Invalid value! Try again.\n>>> ");
-                }
-            }
+            //     while(true) {
+            //         int opt = scan.nextInt();
+            //         // 0. Back
+            //         if(opt == 0) {
+            //             gameState = GameState.MAINMENU;
+            //             break;
+            //         }
+            //         // 1. Lexio
+            //         else if(opt == 1) {
+            //             Screen.clear();
+            //             Screen.printLexioScoreTitle();
+            //             ScoreBoard.printScoreBoard(GameType.LEXIO);
+            //             Screen.pause();
+            //             break;
+            //         }
+            //         // error
+            //         else    System.out.print("Invalid value! Try again.\n>>> ");
+            //     }
+            // }
 
             /* 1P GAMES */
             else if(gameState == GameState._1PGAMES) {
@@ -191,13 +194,89 @@ public class GameWordMain {
                         Screen.clear();
                         game = new Lexio();
                         game.run(player1);
-                        // updateScore(GameType.LEXIO, player1);
                         Screen.pause();
                         break;
                     }
                     // error
                     else    System.out.print("Invalid value! Try again.\n>>> ");
                 }
+            }
+
+            /* 2P GAMES */
+            else if(gameState == GameState._2PGAMES) {
+                Screen.clear();
+                Screen.printLogo();
+                System.out.println("Please choose the game you want to play.");
+                System.out.println("0. Back");
+                System.out.println("1. Lexio");
+                System.out.print(">>> ");
+                while(true) {
+                    int opt = scan.nextInt();
+                    // 0. Back
+                    if(opt == 0) {
+                        gameState = GameState.MAINMENU;
+                        break;
+                    }
+                    // 1. Lexio
+                    else if(opt == 1) {
+                        Screen.clear();
+                        game = new Lexio();
+                        game.run(player1, player2);
+                        Screen.pause();
+                        break;
+                    }
+                    // error
+                    else    System.out.print("Invalid value! Try again.\n>>> ");
+                }
+            }
+
+            /* 2P LOGIN */
+            else if(gameState == GameState._2PLOGIN) {
+                while(true) {
+                    Screen.clear();
+                    Screen.printLogo();
+                    System.out.println("1. Player2 Login");
+                    System.out.println("2. Player2 Sign Up");
+                    System.out.println("3. Exit");
+                    System.out.print(">>> ");
+                    int opt = scan.nextInt();
+                    // 1. Login
+                    if(opt == 1) {
+                        Screen.clear();
+                        Screen.printLogin();
+                        AccountManager.readAccountList();
+                        String id = AccountManager.login();
+                        if(id == null || id == player1.getId())     Screen.pause();
+                        else {
+                            gameState = GameState._2PGAMES;
+                            player2.setId(id);
+                            break;
+                        }
+                    }
+                    // 2. Sign Up
+                    else if(opt == 2) {
+                        Screen.clear();
+                        Screen.printSignUp();
+                        AccountManager.readAccountList();
+                        AccountManager.signup();
+                        Screen.pause();
+                        break;
+                    }
+                    // 3. Exit
+                    else if(opt == 3) {
+                        gameState = GameState.MAINMENU;
+                        break;
+                    }
+                    // error
+                    else    System.out.print("Invalid value! Try again.\n>>> ");
+                }
+            }
+
+            /* GAME END */
+            else if(gameState == GameState.GAMEEND) {
+                Screen.clear();
+                Screen.printEnd();
+                return;
             }
         }
     }

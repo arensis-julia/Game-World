@@ -479,26 +479,34 @@ public class Lexio extends Game {
             if(currentPlayer.getHands().size() == 0) {
                 calculateScore();
                 Screen.clear();
-                System.out.println("=============================== SCORE ===============================");
-                for(int i=0; i<playerNum; i++)  System.out.println(" " + players.get(i).getUser().getId() + " : " + players.get(i).getChips());
-                System.out.println("=====================================================================");
-
-                System.out.print("Do you want to play another game with the same players? (Y/N)\n>>> ");
+                
                 Boolean isEnd = false;
-                while(true) {
-                    String ans = scan.nextLine();
-                    if(ans.equals("Y") || ans.equals("y")) {
-                        for(int i=0; i<playerNum; i++)  players.get(i).setHands(new ArrayList<LexioTile>());
-                        gamePlay();
-                    }
-                    else if(ans.equals("N") || ans.equals("n"))    isEnd = true;
-                    else {
-                        System.out.print("Invalid answer! Please try again.\n>>> ");
-                        continue;
-                    }
-                    break;
+                System.out.println("=============================== SCORE ===============================");
+                for(int i=0; i<playerNum; i++) {
+                    System.out.println(" " + players.get(i).getUser().getId() + " : " + players.get(i).getChips());
+                    if(players.get(i).getChips() == 0)  isEnd = true;
                 }
-                if(isEnd == true)   return;
+                System.out.println("=====================================================================");
+                
+                if(isEnd)   return;
+                else {
+                    System.out.print("Do you want to play another game with the same players? (Y/N)\n>>> ");
+                    while(true) {
+                        String ans = scan.nextLine();
+                        if(ans.equals("Y") || ans.equals("y")) {
+                            for(int i=0; i<playerNum; i++)  players.get(i).setHands(new ArrayList<LexioTile>());
+                            gamePlay();
+                        }
+                        else if(ans.equals("N") || ans.equals("n")) {
+                            return;
+                        }
+                        else {
+                            System.out.print("Invalid answer! Please try again.\n>>> ");
+                            continue;
+                        }
+                        break;
+                    }
+                }
             }
         }
     }
